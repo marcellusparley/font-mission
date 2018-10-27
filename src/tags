@@ -1,0 +1,38 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+GAME_H	Game.h	2;"	d
+Game	Game.h	/^class Game$/;"	c
+MAP_H	Map.h	2;"	d
+Map	Map.h	/^class Map$/;"	c
+QUIT	Game.h	/^    bool QUIT;$/;"	m	class:Game
+TILE_H	Tile.h	2;"	d
+Tile	Tile.h	/^class Tile$/;"	c
+UNIT_H	Unit.h	2;"	d
+Unit	Unit.h	/^class Unit$/;"	c
+_attack	Unit.h	/^    int _attack;$/;"	m	class:Unit
+_cursorX	Map.h	/^    int _cursorX;$/;"	m	class:Map
+_cursorY	Map.h	/^    int _cursorY;$/;"	m	class:Map
+_displayChar	Tile.h	/^    char _displayChar;$/;"	m	class:Tile
+_displayChar	Unit.h	/^    char _displayChar;$/;"	m	class:Unit
+_faction	Unit.h	/^    int _faction;$/;"	m	class:Unit
+_filename	Map.h	/^    std::string _filename;$/;"	m	class:Map
+_health	Unit.h	/^    int _health;$/;"	m	class:Unit
+_height	Map.h	/^    int _height;$/;"	m	class:Map
+_map	Game.h	/^    Map _map;$/;"	m	class:Game
+_movment	Unit.h	/^    int _movment;$/;"	m	class:Unit
+_name	Unit.h	/^    std::string _name;$/;"	m	class:Unit
+_termHeight	Game.h	/^    int _termHeight;$/;"	m	class:Game
+_termWidth	Game.h	/^    int _termWidth;$/;"	m	class:Game
+_tileName	Tile.h	/^    std::string _tileName;$/;"	m	class:Tile
+_tilemap	Map.h	/^    std::vector<Tile> _tilemap;$/;"	m	class:Map
+_unitmap	Map.h	/^    std::vector<Unit> _unitmap;$/;"	m	class:Map
+_width	Map.h	/^    int _width;$/;"	m	class:Map
+erase	main.cpp	/^void erase(int y, int x)$/;"	f
+handleInput	Game.h	/^void Game::handleInput()$/;"	f	class:Game
+init	Game.h	/^void Game::init()$/;"	f	class:Game
+main	main.cpp	/^int main(int argc, char *argv[])$/;"	f
+movementCost	Tile.h	/^    int movementCost;$/;"	m	class:Tile
