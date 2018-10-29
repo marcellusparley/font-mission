@@ -1,3 +1,8 @@
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <queue>
+#include <utility>
 #include "Map.h"
 
 // Constructor. Right now just setting default tiles and unit for testing

@@ -2,13 +2,8 @@
 #define MAP_H
 
 #include <string>
-#include <queue>
-#include <utility>
 #include <unordered_map>
 #include <vector>
-#include <fstream>
-#include <iostream>
-#include <sstream>
 #include "Unit.h"
 #include "Tile.h""
 

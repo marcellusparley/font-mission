@@ -1,9 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <ncurses.h>
-#include <utility>
-#include <string>
 #include "Map.h"
 
 struct Loc

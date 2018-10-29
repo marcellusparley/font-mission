@@ -1,4 +1,6 @@
 #include "Game.h"
+#include <ncurses.h>
+#include <string>
 
 Game::Game()
 {
@@ -190,7 +192,7 @@ void Game::handleInput()
             if (_map->select(_realX(), _realY()))
             {
                 _selected.x = _realX();
-                _selected.x = _realY();
+                _selected.y = _realY();
                 //clear();
                 std::string stat = _map->getUnit(_realX(), _realY())->getStatus();
                 mvaddstr(0, COLS/2, stat.c_str());
@@ -205,9 +207,9 @@ void Game::handleInput()
         // stats display
         else
         {
-            bool t=_map->moveUnit(_selected.x, _selected.x, _realX(), _realY());
+            bool t=_map->moveUnit(_selected.x, _selected.y, _realX(), _realY());
             _selected.x = -1;
-            _selected.x = -1;
+            _selected.y = -1;
             mvaddstr(0, COLS/2, "                      ");
             move(_cursor.y, _cursor.x);
             //clear();
@@ -219,9 +221,9 @@ void Game::handleInput()
     case 'a':
         if (_selected.x != -1)
         {
-            bool test = _map->attackUnit(_selected.x, _selected.x, _realX(), _realY());
+            bool test = _map->attackUnit(_selected.x, _selected.y, _realX(), _realY());
             _selected.x = -1;
-            _selected.x = -1;
+            _selected.y = -1;
             mvaddstr(0, COLS/2, "                      ");
             move(_cursor.y, _cursor.x);
             render();
