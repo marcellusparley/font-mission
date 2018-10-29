@@ -6,6 +6,20 @@
 #include <string>
 #include "Map.h"
 
+struct Loc
+{
+    int x;
+    int y;
+};
+
+struct Rect
+{
+    int x;
+    int y;
+    int w;
+    int h;
+};
+
 class Game
 {
 public:
@@ -22,31 +36,24 @@ private:
 
     // This is to hold location selected when user selects a unit for
     // movement or attack
-    std::pair<int, int> _selected;
+    Loc _selected;
 
     // Bool for the gameloop
     bool QUIT;
 
     // Cursor location on screen
-    int _cX;
-    int _cY;
+    Loc _cursor;
 
     // Frame dimensions of map display
-    int _fW;
-    int _fH;
-    
-    // Origin of map display frame
-    int _winX;
-    int _winY;
+    Rect _frame;
 
     // Offset of map
-    int _offX;
-    int _offY;
+    Loc _off;
 
     // Get the actual map values of the cursor values
     // Probably should make it take no arguments 
-    int _realX(int cx);
-    int _realY(int cy);
+    int _realX();
+    int _realY();
 };
 
 
