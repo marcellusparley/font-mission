@@ -2,34 +2,22 @@
 #define GAME_H
 
 #include "Map.h"
-
-struct Loc
-{
-    int x;
-    int y;
-};
-
-struct Rect
-{
-    int x;
-    int y;
-    int w;
-    int h;
-};
+#include "Tools.h"
+#include "Renderer.h"
 
 class Game
 {
 public:
     Game();
     ~Game();
+    void gameLoop();
+    void handleInput();
     void init();
     void cleanup();
-    void gameLoop();
-    void render();
-    void handleInput();
 
 private:
     Map* _map;
+    Renderer* _ren;
 
     // This is to hold location selected when user selects a unit for
     // movement or attack

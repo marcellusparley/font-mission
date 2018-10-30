@@ -16,10 +16,6 @@ int main(int argc, char *argv[])
 	// Wait until the user presses a key
 	int ch = getch();
 
-	// Clear the screen and do an initial render
-	clear();
-    g->render();
-
     // Starts the game loop
     g->gameLoop();
 
