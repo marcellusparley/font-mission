@@ -1,93 +1,49 @@
 #include "Game.h"
+#include <ncurses.h>
+#include <string>
 
 Game::Game()
 {
     // _map = new Map();
     _map = new Map("maps/map0.txt");
     QUIT = 0;
-    _cX = 0;
-    _cY = 1;
-    _fW = 10;
-    _fH = 10;
-    _offX = 0;
-    _offY = -1;
-    _winX = 0;
-    _winY = 1;
-    _selected = std::make_pair(-1, -1);
+    _cursor.x = 0;
+    _cursor.y = 1;
+    _off.x = 0;
+    _off.y = -1;
+    _frame.w = 10;
+    _frame.h = 10;
+    _frame.x = 0;
+    _frame.y = 1;
+    _ren = new Renderer(_map, _cursor, _frame, _off);
+    _selected.x = -1;
+    _selected.y = -1;
 }
 
 Game::~Game()
 {
     delete _map;
-    cleanup();
+    delete _ren;
 }
 
-void Game::render()
+void Game::cleanup()
 {
-    // Moves the cursor to the top left of the terminal and writes out simple
-    // debug info (currently just the offset values for the map)
-    move(0,0);
-    std::string locline = "offX: " + std::to_string(_offX) +
-        " offY: " + std::to_string(_offY) + "  ";
-    addstr(locline.c_str());
-
-    // Loop that handles printing everything on the map
-    for (int y = _winY; y < _fH; y++)
-        for (int x=_winX; x < _fW; x++)
-        {
-            if (x+_offX >= _map->getWidth() || y+_offY >= _map->getHeight() ||
-                    x+_offX < 0 || y+_offY < 0)
-            {
-                attron(COLOR_PAIR(1));
-                mvaddch(y, x, '#');
-                attron(COLOR_PAIR(1));
-            }
-            else if (_map->getUnit(x+_offX, y+_offY) != nullptr)
-            {
-                attron(COLOR_PAIR(_map->getHighlight(x+_offX, y+_offY)));
-                mvaddch(y, x, _map->getUnit(x+_offX, y+_offY)->getChar());
-                attron(COLOR_PAIR(_map->getHighlight(x+_offX, y+_offY)));
-            }
-            else
-            {
-                attron(COLOR_PAIR(_map->getHighlight(x+_offX, y+_offY)));
-                mvaddch(y, x, _map->getTile(x+_offX, y+_offY).getChar());
-                attron(COLOR_PAIR(_map->getHighlight(x+_offX, y+_offY)));
-            }
-        }
+    _ren->cleanup();
 }
 
 // Get the real values for the cursor postions
-int Game::_realX(int cx) { return cx + _offX; }
-int Game::_realY(int cy) { return cy + _offY; }
-
-// Initialize everything
-void Game::init()
-{    
-    // initialize ncurses
-	initscr();
-    start_color();
-	clear();
-	noecho();
-	// cbreak();
-	keypad(stdscr, TRUE);
-
-    // Color pairs
-    init_pair(1, COLOR_WHITE, COLOR_BLACK);
-    init_pair(2, COLOR_WHITE, COLOR_CYAN);
-    init_pair(3, COLOR_WHITE, COLOR_RED);
-
-    // ncurse GLOBALS for the terminal dimesnisions
-    _fW=COLS;
-    _fH=LINES-1;
-}
+int Game::_realX() { return _cursor.x + _off.x; }
+int Game::_realY() { return _cursor.y + _off.y; }
 
 // Simple gameloop
 void Game::gameLoop()
 {
+    clear();
+    _ren->render();
+
     while (!QUIT)
     {
-        move(_cY, _cX);
+        move(_cursor.y, _cursor.x);
         handleInput();
     }
 }
@@ -102,74 +58,72 @@ void Game::handleInput()
     {
     case 'h':
     case KEY_LEFT:
-        if (_realX(_cX) > 0)
+        if (_realX() > 0)
         {
             // If it hits the scroll map edge then move the offset/scroll
             // the map, else just move the cursor on the screen
-            if (_realX(_cX) == _offX + 2)
+            if (_realX() == _off.x + 2)
             {
-                _offX -= 1;
-                render();
+                _off.x -= 1;
+                _ren->render();
             }
             else
             {
-                _cX -= 1;
-                move(_cY, _cX);
+                _cursor.x -= 1;
+                move(_cursor.y, _cursor.x);
             }
             refresh();
         }
         break;
     case 'l':
     case KEY_RIGHT:
-        if (_realX(_cX) < _map->getWidth()-1)
+        if (_realX() < _map->getWidth()-1)
         {
             // Same as above, handling the scrol edge and moving
-            if (_realX(_cX) == _offX + _fW - 3)
+            if (_realX() == _off.x + _frame.w - 3)
             {
-                _offX += 1;
-                render();
+                _off.x += 1;
+                _ren->render();
             }
             else
             {
-                _cX += 1;
-                move(_cY, _cX);
+                _cursor.x += 1;
+                move(_cursor.y, _cursor.x);
             }
             refresh();
         }
         break;
     case 'k':
     case KEY_UP:
-        if (_realY(_cY) > 0)
+        if (_realY() > 0)
         {
-            if (_realY(_cY) == _offY + 2)
+            if (_realY() == _off.y + 2)
             {
-                _offY -= 1;
-                render();
+                _off.y -= 1;
+                _ren->render();
             }
             else
             {
-                _cY -= 1;
-                move(_cY, _cX);
+                _cursor.y -= 1;
+                move(_cursor.y, _cursor.x);
             }
             refresh();
         }
         break;
     case 'j':
     case KEY_DOWN:
-        if (_realY(_cY) < _map->getHeight()-1)
+        if (_realY() < _map->getHeight()-1)
         {
-            if (_realY(_cY) == _offY + _fH - 3)
+            if (_realY() == _off.y + _frame.h - 3)
             {
-                _offY += 1;
-                render();
+                _off.y += 1;
+                _ren->render();
             }
             else
             {
-                _cY += 1;
-                move(_cY, _cX);
-            }
-            refresh();
-        }
+                _cursor.y += 1;
+                move(_cursor.y, _cursor.x);
+            } refresh(); }
         break;
     // Quiting the game
     case 'q':
@@ -184,17 +138,17 @@ void Game::handleInput()
 
         // When nothing is currently selected and if there is a unit on the
         // current location, get that unit and display the stats
-        if (_selected.first == -1)
+        if (_selected.x == -1)
         {
-            if (_map->select(_realX(_cX), _realY(_cY)))
+            if (_map->select(_realX(), _realY()))
             {
-                _selected.first = _realX(_cX);
-                _selected.second = _realY(_cY);
+                _selected.x = _realX();
+                _selected.y = _realY();
                 //clear();
-                std::string stat = _map->getUnit(_realX(_cX), _realY(_cY))->getStatus();
+                std::string stat = _map->getUnit(_realX(), _realY())->getStatus();
                 mvaddstr(0, COLS/2, stat.c_str());
-                move(_cY, _cX);
-                render();
+                move(_cursor.y, _cursor.x);
+                _ren->render();
             }
         }
 
@@ -204,26 +158,26 @@ void Game::handleInput()
         // stats display
         else
         {
-            bool test = _map->moveUnit(_selected.first, _selected.second, _realX(_cX), _realY(_cY));
-            _selected.first = -1;
-            _selected.second = -1;
+            bool t=_map->moveUnit(_selected.x, _selected.y, _realX(), _realY());
+            _selected.x = -1;
+            _selected.y = -1;
             mvaddstr(0, COLS/2, "                      ");
-            move(_cY, _cX);
+            move(_cursor.y, _cursor.x);
             //clear();
-            render();
+            _ren->render();
         }
         break;
 
     // This case is a super simple and basic attack functionality
     case 'a':
-        if (_selected.first != -1)
+        if (_selected.x != -1)
         {
-            bool test = _map->attackUnit(_selected.first, _selected.second, _realX(_cX), _realY(_cY));
-            _selected.first = -1;
-            _selected.second = -1;
+            bool test = _map->attackUnit(_selected.x, _selected.y, _realX(), _realY());
+            _selected.x = -1;
+            _selected.y = -1;
             mvaddstr(0, COLS/2, "                      ");
-            move(_cY, _cX);
-            render();
+            move(_cursor.y, _cursor.x);
+            _ren->render();
         }
 
         break;
@@ -235,7 +189,7 @@ void Game::handleInput()
         break;
     case 'r':
         clear();
-        render();
+        _ren->render();
         refresh();
         break;
     default:
@@ -243,7 +197,7 @@ void Game::handleInput()
     }
 }
 
-void Game::cleanup()
+void Game::init()
 {
-    endwin();
+    _ren->init();
 }
